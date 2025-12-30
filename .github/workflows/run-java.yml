@@ -1,0 +1,30 @@
+name: Build and Run Java (javac)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Compile sources with javac
+        run: |
+          mkdir -p out
+          find rouglike/src -name '*.java' > sources.txt
+          echo "Found $(wc -l < sources.txt) java source files."
+          javac -d out @sources.txt
+
+      - name: Run main class
+        run: |
+          java -cp out game.Main
